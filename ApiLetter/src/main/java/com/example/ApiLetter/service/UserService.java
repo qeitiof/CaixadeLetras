@@ -1,0 +1,98 @@
+package com.example.ApiLetter.service;
+
+import com.example.ApiLetter.dto.UserCreateDTO;
+import com.example.ApiLetter.dto.UserLoginResponseDTO;
+import com.example.ApiLetter.dto.UserUpdateDTO;
+import com.example.ApiLetter.model.User;
+import com.example.ApiLetter.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import com.example.ApiLetter.dto.UserLoginDTO;
+
+import java.util.List;
+
+@Service
+public class UserService {
+
+    @Autowired
+    private UserRepository repo;
+
+    @Autowired
+    private PasswordEncoder encoder;
+
+    public List<User> listAll() {
+        return repo.findAll();
+    }
+
+    public User findById(Long id) {
+        return repo.findById(id).orElse(null);
+    }
+
+    public User create(UserCreateDTO dto) {
+
+        validarSenhaForte(dto.password());
+
+        User u = new User();
+        u.setUsername(dto.username());
+        u.setEmail(dto.email());
+        u.setPassword(encoder.encode(dto.password()));
+
+        return repo.save(u);
+    }
+
+    public User update(Long id, UserUpdateDTO dto) {
+
+        return repo.findById(id).map(user -> {
+            user.setUsername(dto.username());
+            user.setEmail(dto.email());
+
+            validarSenhaForte(dto.password());
+            user.setPassword(encoder.encode(dto.password()));
+
+            return repo.save(user);
+        }).orElse(null);
+    }
+
+    public void delete(Long id) {
+        repo.deleteById(id);
+    }
+
+    private void validarSenhaForte(String senha) {
+        if (senha.length() < 8 ||
+                !senha.matches(".*[A-Z].*") ||
+                !senha.matches(".*[a-z].*") ||
+                !senha.matches(".*\\d.*") ||
+                !senha.matches(".*[@#$%^&+=!].*")) {
+            throw new IllegalArgumentException(
+                    "A senha deve ter no mínimo 8 caracteres, incluir letra maiúscula, minúscula, número e símbolo."
+            );
+        }
+    }
+
+    @Autowired
+    private FollowService followService;
+
+    public UserLoginResponseDTO login(UserLoginDTO dto) {
+
+        User user = repo.findByUsername(dto.getUsername());
+
+        if (user == null) {
+            throw new RuntimeException("Usuário não encontrado");
+        }
+
+        if (!encoder.matches(dto.getPassword(), user.getPassword())) {
+            throw new RuntimeException("Senha incorreta");
+        }
+
+        // busca seguidores e seguindo
+        List<User> seguidores = followService.meusSeguidores(user.getId());
+        List<User> seguindo = followService.pessoasQueSigo(user.getId());
+
+        return new UserLoginResponseDTO(user, seguidores, seguindo);
+    }
+
+
+
+}
