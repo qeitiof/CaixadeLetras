@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Letterboxd-like</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="logo">Caixa De Letras</div>
+      <div class="menu">
+        <button onclick="abrirTela('telaLogin')" class="btn-secondary">
+          Login
+        </button>
+        <button onclick="abrirTela('telaCadastro')" class="btn-secondary">
+          Cadastrar
+        </button>
+        <button onclick="abrirTela('telaConsultar')" class="btn-secondary">
+          Usuários
+        </button>
+        <button onclick="abrirTela('telaFilmes')" class="btn-secondary">
+          Filmes
+        </button>
+      </div>
+    </div>
+
+    <div class="container">
+      <!-- LOGIN -->
+      <div id="telaLogin" class="tela active">
+        <h2>Login</h2>
+        <input id="l_username" placeholder="Usuário" />
+        <input id="l_senha" type="password" placeholder="Senha" />
+        <button onclick="logar()" class="btn-primary">Entrar</button>
+      </div>
+
+      <!-- CADASTRO -->
+      <div id="telaCadastro" class="tela">
+        <h2>Cadastrar Usuário</h2>
+        <input id="c_username" placeholder="Usuário" />
+        <input id="c_email" placeholder="Email" />
+        <input id="c_senha" type="password" placeholder="Senha" />
+        <button onclick="criarUsuario()" class="btn-primary">Cadastrar</button>
+      </div>
+
+      <!-- CONSULTAR USUÁRIOS -->
+      <div id="telaConsultar" class="tela">
+        <h2>Lista de Usuários</h2>
+        <ul id="listaUsers"></ul>
+      </div>
+
+      <!-- FILMES -->
+      <div id="telaFilmes" class="tela">
+        <h2>Buscar Filme</h2>
+        <input
+          id="filtroTitulo"
+          placeholder="Nome do Filme"
+          oninput="sugerirFilmes()"
+        />
+        <button onclick="buscarFilme()" class="btn-primary">Buscar</button>
+
+        <h3>Filme encontrado</h3>
+        <ul id="listaFilmes"></ul>
+
+        <h3>Sugestões</h3>
+        <ul id="listaSugestoes"></ul>
+      </div>
+
+      <!-- PERFIL -->
+      <div id="telaPerfil" class="tela">
+        <!-- Perfil principal -->
+        <div class="perfil-principal" onclick="abrirModalPerfil()">
+          <div id="perfilAvatar" class="perfil-avatar">F</div>
+          <div class="perfil-info">
+            <h2 id="perfilNome"></h2>
+            <p id="perfilEmail"></p>
+            <p id="perfilSeguidores"></p>
+          </div>
+        </div>
+
+        <!-- Avaliações do usuário -->
+        <div class="perfil-section">
+          <h3>Minhas Avaliações</h3>
+          <div id="minhasAvaliacoes" class="avaliacoes-container"></div>
+        </div>
+
+        <!-- Usuários sugeridos -->
+        <div class="perfil-section">
+          <h3>Usuários que você talvez conheça</h3>
+          <div id="procurarUsuarios" class="usuarios-sugestoes"></div>
+        </div>
+      </div>
+
+      <!-- Tela de Perfil de Outro Usuário -->
+      <div id="telaPerfilOutro" class="tela">
+        <button
+          onclick="voltarParaMeuPerfil()"
+          class="btn-secondary"
+          style="margin-bottom: 20px"
+        >
+          ← Voltar
+        </button>
+
+        <!-- Perfil do outro usuário -->
+        <div class="perfil-principal">
+          <div id="outroPerfilAvatar" class="perfil-avatar">F</div>
+          <div class="perfil-info">
+            <h2 id="outroPerfilNome"></h2>
+            <p id="outroPerfilEmail"></p>
+            <p id="outroPerfilSeguidores"></p>
+          </div>
+        </div>
+
+        <!-- Avaliações do outro usuário -->
+        <div class="perfil-section">
+          <h3>Avaliações de <span id="outroPerfilNomeTitulo"></span></h3>
+          <div id="avaliacoesOutroUsuario" class="avaliacoes-container"></div>
+        </div>
+      </div>
+
+      <!-- Modal de Seguidores / Seguindo -->
+      <div id="modalPerfil" class="modal">
+        <div class="modal-content">
+          <span class="close" onclick="fecharModal()">&times;</span>
+          <h2>Seguidores / Seguindo</h2>
+          <div>
+            <h3>Seguindo</h3>
+            <div id="modalListSeguindo" class="lista-usuarios"></div>
+          </div>
+          <div>
+            <h3>Seguidores</h3>
+            <div id="modalListSeguidores" class="lista-usuarios"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal -->
+      <div id="modalPerfil" class="modal">
+        <div class="modal-content">
+          <span class="close" onclick="fecharModal()">&times;</span>
+          <h2>Seguidores / Seguindo</h2>
+          <div id="modalListSeguidores" class="lista-usuarios"></div>
+          <div id="modalListSeguindo" class="lista-usuarios"></div>
+        </div>
+      </div>
+
+      <!-- Modal de Avaliação -->
+      <div id="modalAvaliacao" class="modal">
+        <div class="modal-content">
+          <span class="close" onclick="fecharModalAvaliacao()">&times;</span>
+          <h2>Avaliar Filme</h2>
+          <div id="filmeAvaliacaoInfo" class="filme-avaliacao-info">
+            <img id="filmeAvaliacaoPoster" src="" alt="" />
+            <div>
+              <h3 id="filmeAvaliacaoTitulo"></h3>
+              <p id="filmeAvaliacaoAno"></p>
+            </div>
+          </div>
+
+          <div class="avaliacao-form">
+            <label>Nota (0 a 5 estrelas):</label>
+            <div class="estrelas-container" id="estrelasContainer">
+              <span class="estrela" data-nota="1">☆</span>
+              <span class="estrela" data-nota="2">☆</span>
+              <span class="estrela" data-nota="3">☆</span>
+              <span class="estrela" data-nota="4">☆</span>
+              <span class="estrela" data-nota="5">☆</span>
+            </div>
+            <p id="notaSelecionada">Selecione uma nota</p>
+
+            <label for="comentarioAvaliacao">Comentário (opcional):</label>
+            <textarea
+              id="comentarioAvaliacao"
+              placeholder="Deixe seu comentário sobre o filme..."
+              rows="4"
+            ></textarea>
+
+            <button onclick="salvarAvaliacao()" class="btn-primary">
+              Salvar Avaliação
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="script.js"></script>
+    <script>
+      function abrirTela(id) {
+        document
+          .querySelectorAll(".tela")
+          .forEach((t) => t.classList.remove("active"));
+        const tela = document.getElementById(id);
+        if (tela) {
+          tela.classList.add("active");
+        }
+
+        if (id === "telaConsultar") carregarUsuarios();
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,642 @@
+@charset "UTF-8";
+
+/* ---- RESET ---- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ---- CORES ---- */
+:root {
+    --roxo: #7B2FFF;
+    --roxo-escuro: #5A1FCC;
+    --cinza-bg: #F3F4F6;
+    --cinza-card: #fff;
+    --text: #333;
+    --cinza-input: #f9f9f9;
+    --hover-card: #f0ebff;
+    --seguindo: #aaa;
+}
+
+/* ---- BODY ---- */
+body {
+    background: var(--cinza-bg);
+    font-family: 'Inter', Arial, sans-serif;
+    color: var(--text);
+}
+
+/* ---- TOPBAR ---- */
+.topbar {
+    background: var(--cinza-card);
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.logo {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--roxo);
+}
+
+.menu button {
+    margin-left: 10px;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: .2s;
+    font-weight: 600;
+}
+
+.btn-secondary {
+    background: #e5d8ff;
+    color: var(--roxo);
+    padding: 8px 14px;
+}
+
+.btn-secondary:hover {
+    background: #d7caff;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 14px;
+    margin-top: 10px;
+    background: var(--roxo);
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    transition: .2s;
+}
+
+.btn-primary:hover {
+    background: var(--roxo-escuro);
+}
+
+/* ---- CONTAINER ---- */
+.container {
+    max-width: 700px;
+    margin: 50px auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* ---- TELAS ---- */
+.tela {
+    display: none;
+    padding: 30px;
+    background: var(--cinza-card);
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    animation: fade .3s ease;
+}
+
+.tela.active {
+    display: block;
+}
+
+@keyframes fade {
+    from { opacity:0; transform: translateY(15px); }
+    to  { opacity:1; transform: translateY(0); }
+}
+
+/* ---- TITULOS ---- */
+h2 {
+    margin-bottom: 20px;
+    color: var(--roxo);
+    font-size: 24px;
+}
+
+h3 {
+    margin: 20px 0 10px 0;
+    color: var(--roxo-escuro);
+    font-size: 18px;
+}
+
+/* ---- INPUTS ---- */
+input, select {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 12px;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+    background: var(--cinza-input);
+    transition: .2s;
+}
+
+input:focus, select:focus {
+    border-color: var(--roxo);
+    background: #fff;
+    outline: none;
+    box-shadow: 0 0 0 3px #e5d8ff;
+}
+
+/* ---- LISTAS E CARDS GERAIS ---- */
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    margin-bottom: 12px;
+    padding: 12px;
+    border-radius: 12px;
+    background: var(--hover-card);
+    color: var(--roxo-escuro);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background .2s;
+}
+
+li:hover {
+    background: #e0d7ff;
+}
+
+img {
+    border-radius: 6px;
+    margin-top: 5px;
+    max-width: 60px;
+}
+
+/* ---- PERFIL ---- */
+.perfil-info p {
+    margin: 5px 0;
+    font-size: 15px;
+    color: var(--text);
+}
+
+/* Estilos de Card de Usuário para Sugestões (Perfil e Buscar) */
+.lista-usuarios {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.usuario-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--cinza-card);
+    padding: 10px 15px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: background 0.2s, transform 0.2s;
+    cursor: pointer;
+}
+
+.usuario-card:hover {
+    background: var(--hover-card);
+    transform: translateY(-2px);
+}
+
+.usuario-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.usuario-avatar {
+    width: 45px;
+    height: 45px;
+    background: var(--roxo);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.usuario-nome {
+    font-weight: bold;
+    color: #333;
+}
+
+.usuario-info-sugestao {
+    font-weight: bold;
+    color: #333;
+}
+
+.usuario-card button {
+    padding: 6px 18px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s;
+}
+
+.usuario-card button.btn-seguir {
+    background: var(--roxo);
+    color: #fff;
+}
+
+.usuario-card button.btn-seguindo {
+    background: var(--seguindo);
+    color: #fff;
+    cursor: default;
+}
+
+/* --- PERFIL ESTILO FUNCIONAL --- */
+.perfil-principal {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.perfil-principal:hover {
+    transform: scale(1.01);
+}
+
+.perfil-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: var(--roxo);
+    color: #fff;
+    font-size: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.perfil-info h2 { font-size: 22px; margin-bottom: 5px; color: var(--roxo); }
+.perfil-info p { font-size: 14px; color: #555; }
+
+/* Usuários sugeridos (Container Flex) */
+.usuarios-sugestoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+/* Usuário clicável (em listas de seguidores/seguindo) */
+.usuario-clicavel {
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.usuario-clicavel:hover {
+    background: var(--hover-card);
+}
+
+/* Container de avaliações */
+.avaliacoes-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.avaliacao-card {
+    background: var(--cinza-card);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.avaliacao-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.avaliacao-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.avaliacao-header h4 {
+    margin: 0;
+    color: var(--roxo-escuro);
+    font-size: 18px;
+}
+
+.avaliacao-estrelas {
+    color: #FFD700;
+    font-size: 18px;
+    letter-spacing: 2px;
+}
+
+.avaliacao-comentario {
+    margin: 10px 0 0 0;
+    color: var(--text);
+    line-height: 1.6;
+    font-style: italic;
+}
+
+.perfil-section {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #e0e0e0;
+}
+
+
+/* Modal */
+.modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; }
+.modal-content { 
+    background: #fff; 
+    padding: 30px; 
+    border-radius: 15px; 
+    max-width: 500px; 
+    width: 90%; 
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+.close { position: absolute; top: 15px; right: 20px; font-size: 30px; font-weight: bold; cursor: pointer; color: #555; }
+
+/* Estilo das listas dentro do modal */
+.modal-list div {
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 16px;
+    color: var(--text);
+}
+.modal-list div:last-child {
+    border-bottom: none;
+}
+.modal-list p {
+    text-align: center;
+    color: var(--seguindo);
+    margin: 10px 0;
+}
+
+
+/* ------------------------------------- */
+/* ---- FILMES CORRIGIDOS ---- */
+/* ------------------------------------- */
+
+#listaFilmes li {
+    list-style: none; 
+    padding: 0;
+    background: none;
+    margin-bottom: 0;
+}
+
+/* FILME EXATO - imagem maior e informações lado a lado */
+.filme-card {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+    background: var(--cinza-card);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+}
+
+.filme-card img {
+    width: 200px; 
+    height: 300px;
+    min-width: 200px; 
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    margin-top: 0;
+}
+
+.filme-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex-grow: 1; 
+}
+
+.filme-info h3 {
+    margin: 0 0 10px 0;
+    font-size: 26px; 
+    color: var(--roxo-escuro);
+}
+
+.filme-info p {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.4;
+    color: var(--text);
+}
+
+
+/* SUGESTÕES DE FILMES */
+#listaSugestoes {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 20px 10px;
+    margin-top: 20px;
+    padding: 0;
+}
+
+#listaSugestoes li {
+    padding: 0;
+    margin-bottom: 0;
+    background: none;
+    align-items: flex-start;
+}
+
+.filme-card-sugestao {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #fff;
+    padding: 10px;
+    border-radius: 12px;
+    flex: 0 0 calc(25% - 10px); 
+    max-width: 170px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    transition: transform 0.2s;
+    cursor: pointer;
+    text-align: center;
+    list-style: none;
+}
+
+.filme-card-sugestao:hover {
+    transform: translateY(-3px); 
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+
+.filme-card-sugestao img {
+    width: 100px; 
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    transition: transform 0.2s;
+}
+
+.filme-info-sugestao {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 40px; 
+}
+
+.filme-info-sugestao p {
+    text-align: center;
+    font-size: 13px; 
+    color: #555;
+    font-weight: 500;
+    margin: 0;
+}
+
+
+/* ------------------------------------- */
+/* ---- MEDIA QUERIES (RESPONSIVIDADE) ---- */
+/* ------------------------------------- */
+
+@media (max-width: 768px) {
+    .topbar {
+        padding: 15px 15px;
+    }
+    .container {
+        margin: 30px auto;
+        padding: 0 15px;
+        max-width: 95%;
+    }
+}
+
+/* ======================================= */
+/* AVALIAÇÃO DE FILMES */
+/* ======================================= */
+.filme-avaliacao-info {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: var(--hover-card);
+    border-radius: 12px;
+}
+
+.filme-avaliacao-info img {
+    width: 100px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-top: 0;
+}
+
+.filme-avaliacao-info h3 {
+    margin: 0 0 5px 0;
+    color: var(--roxo);
+}
+
+.filme-avaliacao-info p {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+}
+
+.avaliacao-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.avaliacao-form label {
+    font-weight: 600;
+    color: var(--roxo-escuro);
+    margin-bottom: 5px;
+}
+
+.estrelas-container {
+    display: flex;
+    gap: 5px;
+    font-size: 32px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.estrela {
+    color: #ddd;
+    transition: color 0.2s, transform 0.2s;
+    font-size: 40px;
+}
+
+.estrela:hover {
+    transform: scale(1.2);
+}
+
+.estrela.ativa {
+    color: #FFD700;
+}
+
+#notaSelecionada {
+    font-weight: 600;
+    color: var(--roxo);
+    margin: 5px 0;
+}
+
+.avaliacao-form textarea {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+    background: var(--cinza-input);
+    transition: .2s;
+    font-family: inherit;
+    resize: vertical;
+}
+
+.avaliacao-form textarea:focus {
+    border-color: var(--roxo);
+    background: #fff;
+    outline: none;
+    box-shadow: 0 0 0 3px #e5d8ff;
+}
+
+@media (max-width: 600px) {
+    /* FILME EXATO - Empilha imagem e info em telas pequenas */
+    .filme-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 20px;
+    }
+    .filme-info h3 {
+        text-align: center;
+    }
+    
+    /* SUGESTÕES - 2 cards por linha */
+    .filme-card-sugestao {
+        flex: 0 0 calc(50% - 15px);
+        max-width: none;
+    }
+    
+    .filme-card-sugestao img {
+        width: 100%; 
+        height: auto; 
+    }
+
+    .filme-avaliacao-info {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+

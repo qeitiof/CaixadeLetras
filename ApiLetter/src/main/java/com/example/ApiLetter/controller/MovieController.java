@@ -4,16 +4,13 @@ import com.example.ApiLetter.dto.MovieDTO;
 import com.example.ApiLetter.service.FilmeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.client.RestTemplate;
+
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/movies")
 public class MovieController {
-
-    @Value("${omdb.api.key}")
-    private String omdbApiKey;
 
     private final FilmeService filmeService;
 
@@ -36,20 +33,21 @@ public class MovieController {
     }
 
     // ================================
-    // SUGESTÕES (MATCHES)
+    // SUGESTÕES (MATCHES) COM FALLBACK
     // ================================
     @GetMapping("/suggest")
-    public ResponseEntity<?> sugerir(@RequestParam String titulo) {
+    public ResponseEntity<Map<String, Object>> sugerir(@RequestParam String titulo) {
         try {
-            String url = "https://www.omdbapi.com/?apikey=" + omdbApiKey + "&s=" + titulo;
-
-            RestTemplate rt = new RestTemplate();
-            String resposta = rt.getForObject(url, String.class);
-
-            return ResponseEntity.ok(resposta);
-
+            Map<String, Object> resultado = filmeService.buscarSugestoes(titulo);
+            return ResponseEntity.ok(resultado);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Erro ao buscar sugestões");
+            System.err.println("Erro no controller ao buscar sugestões: " + e.getMessage());
+            e.printStackTrace();
+            Map<String, Object> erro = new java.util.HashMap<>();
+            erro.put("Response", "False");
+            erro.put("Error", "Erro ao buscar sugestões: " + e.getMessage());
+            erro.put("Search", new java.util.ArrayList<>());
+            return ResponseEntity.status(500).body(erro);
         }
     }
 }

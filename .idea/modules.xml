@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/ApiLetter.iml" filepath="$PROJECT_DIR$/.idea/ApiLetter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/CaixadeLetras.iml" filepath="$PROJECT_DIR$/.idea/CaixadeLetras.iml" />
     </modules>
   </component>
 </project>

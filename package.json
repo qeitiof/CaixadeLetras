@@ -1,0 +1,20 @@
+{
+  "name": "caixadeletras",
+  "version": "1.0.0",
+  "description": "Sistema de avaliação de **filmes, séries e livros**, inspirado no Letterboxd.  \r Desenvolvido como projeto acadêmico para praticar **desenvolvimento backend com Java e Spring Boot**.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qeitiof/CaixadeLetras.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/qeitiof/CaixadeLetras/issues"
+  },
+  "homepage": "https://github.com/qeitiof/CaixadeLetras#readme"
+}
