@@ -7,16 +7,18 @@ public class ReviewResponseDTO {
     private int nota;
     private String username;
     private String movieTitle;
+    private String moviePoster;
 
     public ReviewResponseDTO() {}
 
-    public ReviewResponseDTO(Long id, String imdbId, String comentario, int nota, String username, String movieTitle) {
+    public ReviewResponseDTO(Long id, String imdbId, String comentario, int nota, String username, String movieTitle, String moviePoster) {
         this.id = id;
         this.imdbId = imdbId;
         this.comentario = comentario;
         this.nota = nota;
         this.username = username;
         this.movieTitle = movieTitle;
+        this.moviePoster = moviePoster;
     }
 
     public Long getId() {
@@ -65,6 +67,14 @@ public class ReviewResponseDTO {
 
     public void setMovieTitle(String movieTitle) {
         this.movieTitle = movieTitle;
+    }
+
+    public String getMoviePoster() {
+        return moviePoster;
+    }
+
+    public void setMoviePoster(String moviePoster) {
+        this.moviePoster = moviePoster;
     }
 }
 

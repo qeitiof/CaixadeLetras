@@ -80,13 +80,22 @@ public class ReviewService {
     }
 
     private ReviewResponseDTO toResponseDTO(Review review) {
+        String movieTitle = "";
+        String moviePoster = "";
+        
+        if (review.getMovie() != null) {
+            movieTitle = review.getMovie().getTitulo() != null ? review.getMovie().getTitulo() : "";
+            moviePoster = review.getMovie().getPoster() != null ? review.getMovie().getPoster() : "";
+        }
+        
         return new ReviewResponseDTO(
             review.getId(),
             review.getImdbId(),
             review.getComentario(),
             review.getNota(),
             review.getUser().getUsername(),
-            review.getMovie() != null ? review.getMovie().getTitulo() : ""
+            movieTitle,
+            moviePoster
         );
     }
 }

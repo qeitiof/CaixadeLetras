@@ -198,16 +198,24 @@ async function carregarAvaliacoesUsuario(userId, containerId) {
       // Criar estrelas
       const estrelas = "★".repeat(av.nota) + "☆".repeat(5 - av.nota);
 
+      // Imagem do poster (ou placeholder se não tiver)
+      const posterUrl = av.moviePoster && av.moviePoster !== "N/A" ? av.moviePoster : "https://via.placeholder.com/150x225?text=Sem+Imagem";
+
       card.innerHTML = `
-        <div class="avaliacao-header">
-          <h4>${av.movieTitle || "Filme"}</h4>
-          <div class="avaliacao-estrelas">${estrelas}</div>
+        <div class="avaliacao-content">
+          <img src="${posterUrl}" alt="${av.movieTitle || 'Filme'}" class="avaliacao-poster" onerror="this.src='https://via.placeholder.com/150x225?text=Sem+Imagem'">
+          <div class="avaliacao-info">
+            <div class="avaliacao-header">
+              <h4>${av.movieTitle || "Filme"}</h4>
+              <div class="avaliacao-estrelas">${estrelas}</div>
+            </div>
+            ${
+              av.comentario
+                ? `<p class="avaliacao-comentario">${av.comentario}</p>`
+                : ""
+            }
+          </div>
         </div>
-        ${
-          av.comentario
-            ? `<p class="avaliacao-comentario">${av.comentario}</p>`
-            : ""
-        }
       `;
       container.appendChild(card);
     });
