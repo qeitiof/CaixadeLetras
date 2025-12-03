@@ -1,7 +1,13 @@
 package com.example.ApiLetter.controller;
 
 import com.example.ApiLetter.dto.MovieDTO;
+import com.example.ApiLetter.model.Movie;
 import com.example.ApiLetter.service.FilmeService;
+import com.example.ApiLetter.service.MovieService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,13 +19,74 @@ import java.util.Map;
 public class MovieController {
 
     private final FilmeService filmeService;
+    private final MovieService movieService;
 
-    public MovieController(FilmeService filmeService) {
+    public MovieController(FilmeService filmeService, MovieService movieService) {
         this.filmeService = filmeService;
+        this.movieService = movieService;
     }
 
     // ================================
-    // BUSCAR FILME EXATO PELO TÍTULO
+    // CRUD COMPLETO
+    // ================================
+    
+    // GET ALL com paginação, ordenação e filtros
+    @GetMapping
+    public ResponseEntity<Page<Movie>> listarTodos(
+            @PageableDefault(size = 10, sort = "titulo") Pageable pageable,
+            @RequestParam(required = false) String titulo,
+            @RequestParam(required = false) String year,
+            @RequestParam(required = false) String imdbId) {
+        Page<Movie> movies = movieService.listarTodos(pageable, titulo, year, imdbId);
+        return ResponseEntity.ok(movies);
+    }
+
+    // GET ONE
+    @GetMapping("/{id}")
+    public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
+        try {
+            Movie movie = movieService.buscarPorId(id);
+            return ResponseEntity.ok(movie);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    // CREATE
+    @PostMapping
+    public ResponseEntity<?> criar(@RequestBody Movie movie) {
+        try {
+            Movie novo = movieService.criar(movie);
+            return ResponseEntity.status(HttpStatus.CREATED).body(novo);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    // UPDATE
+    @PutMapping("/{id}")
+    public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody Movie movie) {
+        try {
+            Movie atualizado = movieService.atualizar(id, movie);
+            return ResponseEntity.ok(atualizado);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    // DELETE
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deletar(@PathVariable Long id) {
+        try {
+            movieService.deletar(id);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    // ================================
+    // BUSCAR FILME EXATO PELO TÍTULO (API Externa)
     // ================================
     @GetMapping("/search")
     public ResponseEntity<MovieDTO> buscarFilme(@RequestParam String titulo) {

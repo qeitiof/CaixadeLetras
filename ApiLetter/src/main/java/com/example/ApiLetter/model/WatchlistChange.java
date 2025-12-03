@@ -1,6 +1,7 @@
 package com.example.ApiLetter.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "watchlist_changes")
@@ -20,12 +21,18 @@ public class WatchlistChange {
     @JoinColumn(name = "movie_id")
     private Movie movie;
 
-    public WatchlistChange() {}
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    public WatchlistChange() {
+        this.createdAt = LocalDateTime.now();
+    }
 
     public WatchlistChange(String action, Watchlist watchlist, Movie movie) {
         this.action = action;
         this.watchlist = watchlist;
         this.movie = movie;
+        this.createdAt = LocalDateTime.now();
     }
 
     // Getters e Setters
@@ -40,4 +47,7 @@ public class WatchlistChange {
 
     public Movie getMovie() { return movie; }
     public void setMovie(Movie movie) { this.movie = movie; }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }

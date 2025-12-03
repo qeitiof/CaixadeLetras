@@ -23,6 +23,9 @@
         <button onclick="abrirTela('telaFilmes')" class="btn-secondary">
           Filmes
         </button>
+        <button onclick="abrirTela('telaWatchlists')" class="btn-secondary">
+          Minhas Watchlists
+        </button>
       </div>
     </div>
 
@@ -85,6 +88,12 @@
           <div id="minhasAvaliacoes" class="avaliacoes-container"></div>
         </div>
 
+        <!-- Minhas Watchlists -->
+        <div class="perfil-section">
+          <h3>Minhas Watchlists</h3>
+          <div id="minhasWatchlists" class="watchlists-container"></div>
+        </div>
+
         <!-- Usuários sugeridos -->
         <div class="perfil-section">
           <h3>Usuários que você talvez conheça</h3>
@@ -110,6 +119,12 @@
             <p id="outroPerfilEmail"></p>
             <p id="outroPerfilSeguidores"></p>
           </div>
+        </div>
+
+        <!-- Watchlists do outro usuário -->
+        <div class="perfil-section">
+          <h3>Watchlists de <span id="outroPerfilNomeTitulo"></span></h3>
+          <div id="watchlistsOutroUsuario" class="watchlists-container"></div>
         </div>
 
         <!-- Avaliações do outro usuário -->
@@ -143,6 +158,36 @@
           <div id="modalListSeguidores" class="lista-usuarios"></div>
           <div id="modalListSeguindo" class="lista-usuarios"></div>
         </div>
+      </div>
+
+      <!-- TELA DE WATCHLISTS -->
+      <div id="telaWatchlists" class="tela">
+        <h2>Minhas Watchlists</h2>
+        <div style="margin-bottom: 20px;">
+          <input
+            id="novaWatchlistNome"
+            placeholder="Nome da nova watchlist"
+          />
+          <button onclick="criarWatchlist()" class="btn-primary">
+            Criar Watchlist
+          </button>
+        </div>
+        <div id="minhasWatchlists" class="watchlists-container"></div>
+      </div>
+
+      <!-- TELA DE DETALHES DA WATCHLIST -->
+      <div id="telaWatchlistDetalhe" class="tela">
+        <button
+          onclick="abrirTela('telaWatchlists'); carregarMinhasWatchlists();"
+          class="btn-secondary"
+          style="margin-bottom: 20px"
+        >
+          ← Voltar
+        </button>
+        <h2 id="watchlistDetalheNome"></h2>
+        <p id="watchlistDetalheUsuario" style="color: #666; margin-bottom: 20px;"></p>
+        <input type="hidden" id="watchlistDetalheId" />
+        <div id="watchlistFilmes" class="watchlist-filmes-container"></div>
       </div>
 
       <!-- Modal de Avaliação -->
@@ -182,6 +227,23 @@
           </div>
         </div>
       </div>
+
+      <!-- Modal para Adicionar Filme à Watchlist -->
+      <div id="modalAdicionarFilme" class="modal">
+        <div class="modal-content">
+          <span class="close" onclick="fecharModalAdicionarFilme()">&times;</span>
+          <h2>Adicionar Filme à Watchlist</h2>
+          <div class="avaliacao-form">
+            <label for="selectWatchlist">Selecione a watchlist:</label>
+            <select id="selectWatchlist">
+              <option>Carregando...</option>
+            </select>
+            <button onclick="confirmarAdicionarFilme()" class="btn-primary">
+              Adicionar
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- SCRIPTS -->
@@ -197,6 +259,10 @@
         }
 
         if (id === "telaConsultar") carregarUsuarios();
+        if (id === "telaWatchlists" && meuId) carregarMinhasWatchlists();
+        if (id === "telaPerfil" && meuId) {
+          carregarPerfil(meuId);
+        }
       }
     </script>
   </body>

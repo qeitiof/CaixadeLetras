@@ -1,6 +1,7 @@
 package com.example.ApiLetter.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -20,11 +21,22 @@ public class Watchlist {
     @OneToMany(mappedBy = "watchlist", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WatchlistChange> changes;
 
-    public Watchlist() {}
+    @Column(name = "last_update")
+    private LocalDateTime lastUpdate;
+
+    @Column(name = "active")
+    private Boolean active = true; // Por padrão, watchlist é ativa
+
+    public Watchlist() {
+        this.lastUpdate = LocalDateTime.now();
+        this.active = true;
+    }
 
     public Watchlist(String name, User user) {
         this.name = name;
         this.user = user;
+        this.lastUpdate = LocalDateTime.now();
+        this.active = true;
     }
 
     // Getters e Setters
@@ -39,4 +51,10 @@ public class Watchlist {
 
     public List<WatchlistChange> getChanges() { return changes; }
     public void setChanges(List<WatchlistChange> changes) { this.changes = changes; }
+
+    public LocalDateTime getLastUpdate() { return lastUpdate; }
+    public void setLastUpdate(LocalDateTime lastUpdate) { this.lastUpdate = lastUpdate; }
+
+    public Boolean getActive() { return active; }
+    public void setActive(Boolean active) { this.active = active; }
 }

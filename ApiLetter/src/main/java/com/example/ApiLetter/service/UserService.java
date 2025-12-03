@@ -6,6 +6,9 @@ import com.example.ApiLetter.dto.UserUpdateDTO;
 import com.example.ApiLetter.model.User;
 import com.example.ApiLetter.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +27,22 @@ public class UserService {
 
     public List<User> listAll() {
         return repo.findAll();
+    }
+
+    // GET ALL com paginação, ordenação e filtros
+    public Page<User> listAll(Pageable pageable, String username, String email) {
+        Specification<User> spec = Specification.where(null);
+        
+        if (username != null && !username.isEmpty()) {
+            spec = spec.and((root, query, cb) -> 
+                cb.like(cb.lower(root.get("username")), "%" + username.toLowerCase() + "%"));
+        }
+        if (email != null && !email.isEmpty()) {
+            spec = spec.and((root, query, cb) -> 
+                cb.like(cb.lower(root.get("email")), "%" + email.toLowerCase() + "%"));
+        }
+        
+        return repo.findAll(spec, pageable);
     }
 
     public User findById(Long id) {
