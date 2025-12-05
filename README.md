@@ -150,14 +150,15 @@ O projeto segue uma arquitetura em camadas:
 ### Watchlists (`/watchlists`)
 - `GET /watchlists` - Lista todas (com paginação, ordenação e filtros)
 - `GET /watchlists/user/{userId}` - Lista watchlists de um usuário
+- `GET /watchlists/arquivadas/user/{userId}` - Lista watchlists arquivadas (inativas) de um usuário
 - `GET /watchlists/{id}` - Busca watchlist por ID
 - `POST /watchlists` - Cria nova watchlist (retorna 201)
 - `POST /watchlists/add-movie` - Adiciona filme à watchlist
 - `DELETE /watchlists/{id}/movies/{movieId}` - Remove filme da watchlist
-- `DELETE /watchlists/{id}` - Deleta watchlist (retorna 204)
+- `DELETE /watchlists/{id}?userId={userId}` - Arquivar watchlist (inativa ao invés de deletar)
 - `GET /watchlists/inativos` - Lista watchlists inativas por mais de uma semana
 - `PUT /watchlists/{id}/inativar?userId={userId}` - Inativa uma watchlist
-- `PUT /watchlists/{id}/ativar?userId={userId}` - Ativa uma watchlist
+- `PUT /watchlists/{id}/ativar?userId={userId}` - Reativa uma watchlist arquivada
 - `GET /watchlists/{id}/historico` - Consulta histórico de mudanças de uma watchlist
 
 ## 📋 Paginação e Ordenação
@@ -322,30 +323,43 @@ O projeto implementa um **GlobalExceptionHandler** centralizado que trata todos 
 }
 ```
 
-## 🔄 Sistema de Inativação/Ativação (Watchlists)
+## 🔄 Sistema de Arquivamento/Ativação (Watchlists)
 
-O sistema de watchlists possui funcionalidade de inativação/ativação:
+O sistema de watchlists utiliza **arquivamento** ao invés de exclusão permanente. Quando uma watchlist é "deletada", ela é na verdade arquivada (inativada), permitindo que seja reativada posteriormente.
 
 ### Funcionalidades:
+- **Arquivamento**: Ao invés de deletar, as watchlists são arquivadas (marcadas como inativas)
+  - O endpoint `DELETE /watchlists/{id}` arquiva a watchlist
+  - A watchlist não é removida do banco de dados
+  - Pode ser reativada a qualquer momento
+
 - **Última Atualização**: Cada watchlist possui um campo `lastUpdate` que é atualizado automaticamente quando:
   - Um filme é adicionado
   - Um filme é removido
-  - A watchlist é ativada/inativada
+  - A watchlist é arquivada/reativada
 
-- **Status Ativo/Inativo**: Cada watchlist possui um campo `active` (boolean) que indica se está ativa ou inativa.
+- **Status Ativo/Inativo**: Cada watchlist possui um campo `active` (boolean) que indica se está ativa ou arquivada.
 
-- **Listagem de Inativas**: O endpoint `/watchlists/inativos` retorna todas as watchlists que estão inativas há mais de uma semana.
+- **Listagem de Arquivadas**: 
+  - `GET /watchlists/arquivadas/user/{userId}` - Lista todas as watchlists arquivadas de um usuário
+  - `GET /watchlists/inativos` - Lista watchlists inativas por mais de uma semana (para administração)
 
 ### Exemplo de uso:
 ```bash
-# Listar watchlists inativas por mais de uma semana
-GET /watchlists/inativos
+# Arquivar uma watchlist (ao invés de deletar)
+DELETE /watchlists/1?userId=1
 
-# Inativar uma watchlist
+# Listar watchlists arquivadas de um usuário
+GET /watchlists/arquivadas/user/1
+
+# Reativar uma watchlist arquivada
+PUT /watchlists/1/ativar?userId=1
+
+# Inativar uma watchlist (sem deletar)
 PUT /watchlists/1/inativar?userId=1
 
-# Ativar uma watchlist
-PUT /watchlists/1/ativar?userId=1
+# Listar watchlists inativas por mais de uma semana
+GET /watchlists/inativos
 ```
 
 ## 🔐 Variáveis de Ambiente

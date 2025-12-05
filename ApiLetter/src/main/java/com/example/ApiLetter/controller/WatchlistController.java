@@ -88,17 +88,20 @@ public class WatchlistController {
         }
     }
 
-    // Deletar watchlist
+    // Arquivar watchlist (inativa ao invés de deletar)
     @DeleteMapping("/{watchlistId}")
-    public ResponseEntity<?> deletarWatchlist(
+    public ResponseEntity<?> arquivarWatchlist(
             @PathVariable Long watchlistId,
             @RequestParam Long userId) {
-        try {
-            watchlistService.deletarWatchlist(watchlistId, userId);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+        WatchlistResponseDTO response = watchlistService.arquivarWatchlist(watchlistId, userId);
+        return ResponseEntity.ok(response);
+    }
+
+    // Listar watchlists arquivadas de um usuário
+    @GetMapping("/arquivadas/user/{userId}")
+    public ResponseEntity<List<WatchlistResponseDTO>> listarArquivadas(@PathVariable Long userId) {
+        List<WatchlistResponseDTO> watchlists = watchlistService.listarArquivadas(userId);
+        return ResponseEntity.ok(watchlists);
     }
 
     // Listar watchlists inativas por mais de uma semana
@@ -108,30 +111,22 @@ public class WatchlistController {
         return ResponseEntity.ok(watchlists);
     }
 
-    // Inativar watchlist
+    // Inativar watchlist (mantido para compatibilidade)
     @PutMapping("/{watchlistId}/inativar")
     public ResponseEntity<?> inativarWatchlist(
             @PathVariable Long watchlistId,
             @RequestParam Long userId) {
-        try {
-            WatchlistResponseDTO response = watchlistService.inativarWatchlist(watchlistId, userId);
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+        WatchlistResponseDTO response = watchlistService.inativarWatchlist(watchlistId, userId);
+        return ResponseEntity.ok(response);
     }
 
-    // Ativar watchlist
+    // Ativar watchlist (reativar uma watchlist arquivada)
     @PutMapping("/{watchlistId}/ativar")
     public ResponseEntity<?> ativarWatchlist(
             @PathVariable Long watchlistId,
             @RequestParam Long userId) {
-        try {
-            WatchlistResponseDTO response = watchlistService.ativarWatchlist(watchlistId, userId);
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+        WatchlistResponseDTO response = watchlistService.ativarWatchlist(watchlistId, userId);
+        return ResponseEntity.ok(response);
     }
 
     // Buscar histórico de mudanças de uma watchlist

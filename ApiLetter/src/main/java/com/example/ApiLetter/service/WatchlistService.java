@@ -178,15 +178,29 @@ public class WatchlistService {
     }
 
     @Transactional
-    public void deletarWatchlist(Long watchlistId, Long userId) {
+    public WatchlistResponseDTO arquivarWatchlist(Long watchlistId, Long userId) {
         Watchlist watchlist = watchlistRepository.findById(watchlistId)
             .orElseThrow(() -> new RuntimeException("Watchlist não encontrada"));
 
         if (!watchlist.getUser().getId().equals(userId)) {
-            throw new RuntimeException("Você não tem permissão para deletar esta watchlist");
+            throw new RuntimeException("Você não tem permissão para arquivar esta watchlist");
         }
 
-        watchlistRepository.delete(watchlist);
+        // Inativa a watchlist ao invés de deletar
+        watchlist.setActive(false);
+        watchlist.setLastUpdate(LocalDateTime.now());
+        watchlist = watchlistRepository.save(watchlist);
+
+        return toResponseDTO(watchlist);
+    }
+
+    // Listar todas as watchlists arquivadas (inativas) de um usuário
+    public List<WatchlistResponseDTO> listarArquivadas(Long userId) {
+        List<Watchlist> watchlists = watchlistRepository.findByUserId(userId);
+        return watchlists.stream()
+            .filter(w -> !w.getActive())
+            .map(this::toResponseDTO)
+            .collect(Collectors.toList());
     }
 
     // Listar watchlists inativas por mais de uma semana
