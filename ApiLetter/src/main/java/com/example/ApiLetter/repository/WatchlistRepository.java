@@ -1,15 +1,20 @@
 package com.example.ApiLetter.repository;
 
 import com.example.ApiLetter.model.Watchlist;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface WatchlistRepository extends JpaRepository<Watchlist, Long> {
+public interface WatchlistRepository extends JpaRepository<Watchlist, Long>, JpaSpecificationExecutor<Watchlist> {
     List<Watchlist> findByUserId(Long userId);
+    
+    Page<Watchlist> findByUserId(Long userId, Pageable pageable);
     
     // Buscar watchlists inativas por mais de uma semana
     @Query("SELECT w FROM Watchlist w WHERE w.active = false AND w.lastUpdate < :oneWeekAgo")

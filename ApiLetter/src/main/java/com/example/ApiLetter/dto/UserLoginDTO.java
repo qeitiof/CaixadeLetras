@@ -1,9 +1,14 @@
 package com.example.ApiLetter.dto;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class UserLoginDTO {
 
+    @NotBlank(message = "O username é obrigatório")
     private String username;
-    private String password; // mudou de 'senha' para 'password'
+    
+    @NotBlank(message = "A senha é obrigatória")
+    private String password;
 
     public String getUsername() {
         return username;

@@ -3,6 +3,9 @@ package com.example.ApiLetter.service;
 import com.example.ApiLetter.dto.*;
 import com.example.ApiLetter.model.*;
 import com.example.ApiLetter.repository.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -142,6 +145,25 @@ public class WatchlistService {
             .collect(Collectors.toList());
     }
 
+    // GET ALL com paginação, ordenação e filtros
+    public Page<WatchlistResponseDTO> listarTodos(Pageable pageable, Long userId, String name, Boolean active) {
+        Specification<Watchlist> spec = Specification.where(null);
+        
+        if (userId != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("user").get("id"), userId));
+        }
+        if (name != null && !name.isEmpty()) {
+            spec = spec.and((root, query, cb) -> 
+                cb.like(cb.lower(root.get("name")), "%" + name.toLowerCase() + "%"));
+        }
+        if (active != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("active"), active));
+        }
+        
+        Page<Watchlist> page = watchlistRepository.findAll(spec, pageable);
+        return page.map(this::toResponseDTO);
+    }
+
     public List<WatchlistResponseDTO> listarWatchlistsDeOutroUsuario(Long userId) {
         List<Watchlist> watchlists = watchlistRepository.findByUserId(userId);
         return watchlists.stream()
@@ -156,15 +178,29 @@ public class WatchlistService {
     }
 
     @Transactional
-    public void deletarWatchlist(Long watchlistId, Long userId) {
+    public WatchlistResponseDTO arquivarWatchlist(Long watchlistId, Long userId) {
         Watchlist watchlist = watchlistRepository.findById(watchlistId)
             .orElseThrow(() -> new RuntimeException("Watchlist não encontrada"));
 
         if (!watchlist.getUser().getId().equals(userId)) {
-            throw new RuntimeException("Você não tem permissão para deletar esta watchlist");
+            throw new RuntimeException("Você não tem permissão para arquivar esta watchlist");
         }
 
-        watchlistRepository.delete(watchlist);
+        // Inativa a watchlist ao invés de deletar
+        watchlist.setActive(false);
+        watchlist.setLastUpdate(LocalDateTime.now());
+        watchlist = watchlistRepository.save(watchlist);
+
+        return toResponseDTO(watchlist);
+    }
+
+    // Listar todas as watchlists arquivadas (inativas) de um usuário
+    public List<WatchlistResponseDTO> listarArquivadas(Long userId) {
+        List<Watchlist> watchlists = watchlistRepository.findByUserId(userId);
+        return watchlists.stream()
+            .filter(w -> !w.getActive())
+            .map(this::toResponseDTO)
+            .collect(Collectors.toList());
     }
 
     // Listar watchlists inativas por mais de uma semana

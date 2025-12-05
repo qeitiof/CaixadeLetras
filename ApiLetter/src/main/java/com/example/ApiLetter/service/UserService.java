@@ -51,12 +51,12 @@ public class UserService {
 
     public User create(UserCreateDTO dto) {
 
-        validarSenhaForte(dto.password());
+        validarSenhaForte(dto.getPassword());
 
         User u = new User();
-        u.setUsername(dto.username());
-        u.setEmail(dto.email());
-        u.setPassword(encoder.encode(dto.password()));
+        u.setUsername(dto.getUsername());
+        u.setEmail(dto.getEmail());
+        u.setPassword(encoder.encode(dto.getPassword()));
 
         return repo.save(u);
     }
@@ -64,11 +64,16 @@ public class UserService {
     public User update(Long id, UserUpdateDTO dto) {
 
         return repo.findById(id).map(user -> {
-            user.setUsername(dto.username());
-            user.setEmail(dto.email());
-
-            validarSenhaForte(dto.password());
-            user.setPassword(encoder.encode(dto.password()));
+            if (dto.getUsername() != null) {
+                user.setUsername(dto.getUsername());
+            }
+            if (dto.getEmail() != null) {
+                user.setEmail(dto.getEmail());
+            }
+            if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
+                validarSenhaForte(dto.getPassword());
+                user.setPassword(encoder.encode(dto.getPassword()));
+            }
 
             return repo.save(user);
         }).orElse(null);
