@@ -20,12 +20,8 @@ public class FollowController {
     @PostMapping("/{id}/follow")
     public ResponseEntity<?> seguirUsuario(@PathVariable("id") Long followerId,
                                            @RequestParam Long followedId) {
-        try {
-            Follow resultado = followService.seguir(followerId, followedId);
-            return ResponseEntity.ok(resultado); // retorna o Follow
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(400).body(e.getMessage());
-        }
+        Follow resultado = followService.seguir(followerId, followedId);
+        return ResponseEntity.ok(resultado);
     }
 
 

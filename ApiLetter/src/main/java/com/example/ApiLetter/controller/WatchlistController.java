@@ -26,23 +26,15 @@ public class WatchlistController {
     // Criar nova watchlist
     @PostMapping
     public ResponseEntity<?> criarWatchlist(@Valid @RequestBody WatchlistCreateDTO dto) {
-        try {
-            WatchlistResponseDTO response = watchlistService.criarWatchlist(dto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+        WatchlistResponseDTO response = watchlistService.criarWatchlist(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     // Adicionar filme à watchlist
     @PostMapping("/add-movie")
     public ResponseEntity<?> adicionarFilme(@Valid @RequestBody AddMovieToWatchlistDTO dto) {
-        try {
-            WatchlistResponseDTO response = watchlistService.adicionarFilme(dto);
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+        WatchlistResponseDTO response = watchlistService.adicionarFilme(dto);
+        return ResponseEntity.ok(response);
     }
 
     // Remover filme da watchlist
@@ -51,12 +43,8 @@ public class WatchlistController {
             @PathVariable Long watchlistId,
             @PathVariable Long movieId,
             @RequestParam Long userId) {
-        try {
-            WatchlistResponseDTO response = watchlistService.removerFilme(watchlistId, movieId, userId);
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+        WatchlistResponseDTO response = watchlistService.removerFilme(watchlistId, movieId, userId);
+        return ResponseEntity.ok(response);
     }
 
     // GET ALL com paginação, ordenação e filtros
@@ -80,12 +68,8 @@ public class WatchlistController {
     // Buscar watchlist por ID (para visualizar watchlist de outro usuário)
     @GetMapping("/{watchlistId}")
     public ResponseEntity<?> buscarWatchlistPorId(@PathVariable Long watchlistId) {
-        try {
-            WatchlistResponseDTO response = watchlistService.buscarWatchlistPorId(watchlistId);
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        WatchlistResponseDTO response = watchlistService.buscarWatchlistPorId(watchlistId);
+        return ResponseEntity.ok(response);
     }
 
     // Arquivar watchlist (inativa ao invés de deletar)
@@ -132,12 +116,8 @@ public class WatchlistController {
     // Buscar histórico de mudanças de uma watchlist
     @GetMapping("/{watchlistId}/historico")
     public ResponseEntity<?> buscarHistorico(@PathVariable Long watchlistId) {
-        try {
-            List<WatchlistHistoryDTO> historico = watchlistService.buscarHistorico(watchlistId);
-            return ResponseEntity.ok(historico);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        List<WatchlistHistoryDTO> historico = watchlistService.buscarHistorico(watchlistId);
+        return ResponseEntity.ok(historico);
     }
 }
 

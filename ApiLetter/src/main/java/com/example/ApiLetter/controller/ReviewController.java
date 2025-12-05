@@ -28,14 +28,8 @@ public class ReviewController {
     // CREATE
     @PostMapping
     public ResponseEntity<?> criarAvaliacao(@Valid @RequestBody ReviewCreateDTO dto) {
-        try {
-            ReviewResponseDTO response = reviewService.criarAvaliacao(dto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        ReviewResponseDTO response = reviewService.criarAvaliacao(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     // GET ALL com paginação, ordenação e filtros
@@ -53,34 +47,22 @@ public class ReviewController {
     // GET ONE
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
-        try {
-            ReviewResponseDTO review = reviewService.buscarPorId(id);
-            return ResponseEntity.ok(review);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        ReviewResponseDTO review = reviewService.buscarPorId(id);
+        return ResponseEntity.ok(review);
     }
 
     // UPDATE
     @PutMapping("/{id}")
     public ResponseEntity<?> atualizar(@PathVariable Long id, @Valid @RequestBody ReviewUpdateDTO dto) {
-        try {
-            ReviewResponseDTO response = reviewService.atualizar(id, dto);
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        ReviewResponseDTO response = reviewService.atualizar(id, dto);
+        return ResponseEntity.ok(response);
     }
 
     // DELETE
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletar(@PathVariable Long id) {
-        try {
-            reviewService.deletar(id);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        reviewService.deletar(id);
+        return ResponseEntity.noContent().build();
     }
 
     // Endpoints específicos (mantidos para compatibilidade)

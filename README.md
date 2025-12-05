@@ -364,11 +364,13 @@ GET /watchlists/inativos
 
 ## 🔐 Variáveis de Ambiente
 
-O projeto utiliza o arquivo `application.properties` para configurações. Um arquivo de exemplo `env.example` está disponível na raiz do projeto `ApiLetter/` com todas as variáveis de ambiente necessárias.
+O projeto utiliza o arquivo `application.properties` para configurações. Um arquivo de exemplo `.env.example` está disponível na raiz do projeto `ApiLetter/` com todas as variáveis de ambiente necessárias.
 
-### Arquivo env.example
+**Nota:** O arquivo `.env.example` pode não aparecer em alguns sistemas de arquivos por começar com ponto. Para criar seu próprio arquivo `.env`, copie o conteúdo do `.env.example` ou use as variáveis abaixo.
 
-O arquivo `env.example` contém:
+### Variáveis de Ambiente
+
+As seguintes variáveis podem ser configuradas:
 
 ```env
 # Configurações do Banco de Dados H2

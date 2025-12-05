@@ -47,55 +47,39 @@ public class MovieController {
     // GET ONE
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
-        try {
-            Movie movie = movieService.buscarPorId(id);
-            return ResponseEntity.ok(movie);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        Movie movie = movieService.buscarPorId(id);
+        return ResponseEntity.ok(movie);
     }
 
     // CREATE
     @PostMapping
     public ResponseEntity<?> criar(@Valid @RequestBody MovieCreateDTO dto) {
-        try {
-            Movie movie = new Movie();
-            movie.setTitulo(dto.getTitulo());
-            movie.setImdbId(dto.getImdbId());
-            movie.setYear(dto.getYear());
-            movie.setPoster(dto.getPoster());
-            Movie novo = movieService.criar(movie);
-            return ResponseEntity.status(HttpStatus.CREATED).body(novo);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+        Movie movie = new Movie();
+        movie.setTitulo(dto.getTitulo());
+        movie.setImdbId(dto.getImdbId());
+        movie.setYear(dto.getYear());
+        movie.setPoster(dto.getPoster());
+        Movie novo = movieService.criar(movie);
+        return ResponseEntity.status(HttpStatus.CREATED).body(novo);
     }
 
     // UPDATE
     @PutMapping("/{id}")
     public ResponseEntity<?> atualizar(@PathVariable Long id, @Valid @RequestBody MovieUpdateDTO dto) {
-        try {
-            Movie movie = new Movie();
-            movie.setTitulo(dto.getTitulo());
-            movie.setImdbId(dto.getImdbId());
-            movie.setYear(dto.getYear());
-            movie.setPoster(dto.getPoster());
-            Movie atualizado = movieService.atualizar(id, movie);
-            return ResponseEntity.ok(atualizado);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        Movie movie = new Movie();
+        movie.setTitulo(dto.getTitulo());
+        movie.setImdbId(dto.getImdbId());
+        movie.setYear(dto.getYear());
+        movie.setPoster(dto.getPoster());
+        Movie atualizado = movieService.atualizar(id, movie);
+        return ResponseEntity.ok(atualizado);
     }
 
     // DELETE
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletar(@PathVariable Long id) {
-        try {
-            movieService.deletar(id);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        movieService.deletar(id);
+        return ResponseEntity.noContent().build();
     }
 
     // ================================
