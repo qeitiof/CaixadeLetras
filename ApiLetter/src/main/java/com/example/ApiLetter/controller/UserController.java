@@ -12,6 +12,7 @@ import com.example.ApiLetter.service.FollowService;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -82,7 +83,7 @@ public class UserController {
 
     // CREATE
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody UserCreateDTO dto) {
+    public ResponseEntity<?> create(@Valid @RequestBody UserCreateDTO dto) {
         try {
             User user = service.create(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(user);
@@ -95,7 +96,7 @@ public class UserController {
 
     // UPDATE
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UserUpdateDTO dto) {
+    public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody UserUpdateDTO dto) {
         User user = service.update(id, dto);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado");
@@ -116,7 +117,7 @@ public class UserController {
 
     // Login com retorno de seguidores e seguindo
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody UserLoginDTO dto) {
+    public ResponseEntity<?> login(@Valid @RequestBody UserLoginDTO dto) {
         try {
             UserLoginResponseDTO resposta = service.login(dto);
             return ResponseEntity.ok(resposta);

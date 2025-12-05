@@ -1,9 +1,12 @@
 package com.example.ApiLetter.controller;
 
 import com.example.ApiLetter.dto.MovieDTO;
+import com.example.ApiLetter.dto.MovieCreateDTO;
+import com.example.ApiLetter.dto.MovieUpdateDTO;
 import com.example.ApiLetter.model.Movie;
 import com.example.ApiLetter.service.FilmeService;
 import com.example.ApiLetter.service.MovieService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -54,8 +57,13 @@ public class MovieController {
 
     // CREATE
     @PostMapping
-    public ResponseEntity<?> criar(@RequestBody Movie movie) {
+    public ResponseEntity<?> criar(@Valid @RequestBody MovieCreateDTO dto) {
         try {
+            Movie movie = new Movie();
+            movie.setTitulo(dto.getTitulo());
+            movie.setImdbId(dto.getImdbId());
+            movie.setYear(dto.getYear());
+            movie.setPoster(dto.getPoster());
             Movie novo = movieService.criar(movie);
             return ResponseEntity.status(HttpStatus.CREATED).body(novo);
         } catch (RuntimeException e) {
@@ -65,8 +73,13 @@ public class MovieController {
 
     // UPDATE
     @PutMapping("/{id}")
-    public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody Movie movie) {
+    public ResponseEntity<?> atualizar(@PathVariable Long id, @Valid @RequestBody MovieUpdateDTO dto) {
         try {
+            Movie movie = new Movie();
+            movie.setTitulo(dto.getTitulo());
+            movie.setImdbId(dto.getImdbId());
+            movie.setYear(dto.getYear());
+            movie.setPoster(dto.getPoster());
             Movie atualizado = movieService.atualizar(id, movie);
             return ResponseEntity.ok(atualizado);
         } catch (RuntimeException e) {

@@ -3,6 +3,9 @@ package com.example.ApiLetter.service;
 import com.example.ApiLetter.dto.*;
 import com.example.ApiLetter.model.*;
 import com.example.ApiLetter.repository.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -140,6 +143,25 @@ public class WatchlistService {
         return watchlists.stream()
             .map(this::toResponseDTO)
             .collect(Collectors.toList());
+    }
+
+    // GET ALL com paginação, ordenação e filtros
+    public Page<WatchlistResponseDTO> listarTodos(Pageable pageable, Long userId, String name, Boolean active) {
+        Specification<Watchlist> spec = Specification.where(null);
+        
+        if (userId != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("user").get("id"), userId));
+        }
+        if (name != null && !name.isEmpty()) {
+            spec = spec.and((root, query, cb) -> 
+                cb.like(cb.lower(root.get("name")), "%" + name.toLowerCase() + "%"));
+        }
+        if (active != null) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("active"), active));
+        }
+        
+        Page<Watchlist> page = watchlistRepository.findAll(spec, pageable);
+        return page.map(this::toResponseDTO);
     }
 
     public List<WatchlistResponseDTO> listarWatchlistsDeOutroUsuario(Long userId) {

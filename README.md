@@ -148,6 +148,7 @@ O projeto segue uma arquitetura em camadas:
 - `GET /reviews/user/{userId}` - Lista avaliações de um usuário
 
 ### Watchlists (`/watchlists`)
+- `GET /watchlists` - Lista todas (com paginação, ordenação e filtros)
 - `GET /watchlists/user/{userId}` - Lista watchlists de um usuário
 - `GET /watchlists/{id}` - Busca watchlist por ID
 - `POST /watchlists` - Cria nova watchlist (retorna 201)
@@ -184,6 +185,7 @@ GET /reviews?page=0&size=5&sort=id,desc
 **Exemplo:**
 ```
 GET /users?username=joao&email=gmail
+GET /users?page=0&size=10&sort=username,asc&username=joao
 ```
 
 ### Filmes
@@ -194,6 +196,7 @@ GET /users?username=joao&email=gmail
 **Exemplo:**
 ```
 GET /movies?titulo=matrix&year=1999
+GET /movies?page=0&size=20&sort=year,desc&titulo=matrix
 ```
 
 ### Avaliações
@@ -205,18 +208,72 @@ GET /movies?titulo=matrix&year=1999
 **Exemplo:**
 ```
 GET /reviews?notaMin=4&notaMax=5&userId=1
+GET /reviews?page=0&size=5&sort=id,desc&notaMin=4
+```
+
+### Watchlists
+- `userId` - ID do usuário (busca exata)
+- `name` - Busca parcial por nome da watchlist
+- `active` - Status ativo/inativo (true/false)
+
+**Exemplo:**
+```
+GET /watchlists?userId=1&active=true
+GET /watchlists?page=0&size=10&sort=id,desc&name=assistir&active=true
 ```
 
 ## ✅ Validação de Dados
 
-O projeto utiliza validação Bean Validation (`@Valid`, `@NotNull`, `@NotBlank`, `@Min`, `@Max`):
+O projeto utiliza validação Bean Validation (`@Valid`, `@NotNull`, `@NotBlank`, `@Min`, `@Max`, `@Email`, `@Size`):
 
-- **ReviewCreateDTO**: Valida nota (1-5), imdbId obrigatório, userId obrigatório
-- **ReviewUpdateDTO**: Valida nota (1-5)
-- **WatchlistCreateDTO**: Valida nome obrigatório, userId obrigatório
-- **AddMovieToWatchlistDTO**: Valida todos os campos obrigatórios
+### DTOs com Validação:
 
-Erros de validação retornam status **400 Bad Request** com mensagem de erro.
+- **UserCreateDTO**: 
+  - `username`: obrigatório, entre 3 e 50 caracteres
+  - `email`: obrigatório, formato de email válido
+  - `password`: obrigatório, mínimo 8 caracteres
+
+- **UserUpdateDTO**: 
+  - `username`: opcional, entre 3 e 50 caracteres (se fornecido)
+  - `email`: opcional, formato de email válido (se fornecido)
+  - `password`: opcional, mínimo 8 caracteres (se fornecido)
+
+- **UserLoginDTO**: 
+  - `username`: obrigatório
+  - `password`: obrigatório
+
+- **MovieCreateDTO**: 
+  - `titulo`: obrigatório, máximo 255 caracteres
+  - `imdbId`: obrigatório
+  - `year`: opcional
+  - `poster`: opcional
+
+- **MovieUpdateDTO**: 
+  - `titulo`: opcional, máximo 255 caracteres (se fornecido)
+  - `imdbId`: opcional
+  - `year`: opcional
+  - `poster`: opcional
+
+- **ReviewCreateDTO**: 
+  - `imdbId`: obrigatório
+  - `nota`: obrigatório, entre 1 e 5
+  - `userId`: obrigatório
+  - `comentario`: opcional
+
+- **ReviewUpdateDTO**: 
+  - `nota`: obrigatório, entre 1 e 5
+  - `comentario`: opcional
+
+- **WatchlistCreateDTO**: 
+  - `name`: obrigatório
+  - `userId`: obrigatório
+
+- **AddMovieToWatchlistDTO**: 
+  - `watchlistId`: obrigatório
+  - `imdbId`: obrigatório
+  - `userId`: obrigatório
+
+Erros de validação retornam status **400 Bad Request** com mensagem de erro detalhada através do `GlobalExceptionHandler`.
 
 ## 📝 Códigos HTTP Utilizados
 
@@ -225,7 +282,45 @@ Erros de validação retornam status **400 Bad Request** com mensagem de erro.
 - **204 No Content** - Sucesso sem conteúdo (DELETE)
 - **400 Bad Request** - Dados inválidos ou erro de validação
 - **404 Not Found** - Recurso não encontrado
+- **409 Conflict** - Conflito (ex: recurso já existe)
 - **500 Internal Server Error** - Erro interno do servidor
+
+## 🔧 Tratamento de Erros
+
+O projeto implementa um **GlobalExceptionHandler** centralizado que trata todos os erros da aplicação de forma consistente:
+
+### Tipos de Exceções Tratadas:
+
+1. **MethodArgumentNotValidException** - Erros de validação Bean Validation
+   - Retorna: `400 Bad Request`
+   - Formato: `{ "status": 400, "error": "Erro de validação", "message": "...", "timestamp": "..." }`
+
+2. **IllegalArgumentException** - Argumentos inválidos
+   - Retorna: `400 Bad Request`
+
+3. **ResourceNotFoundException** - Recurso não encontrado (exceção customizada)
+   - Retorna: `404 Not Found`
+
+4. **ConflictException** - Conflito (exceção customizada)
+   - Retorna: `409 Conflict`
+
+5. **RuntimeException** - Erros de runtime
+   - Analisa a mensagem para determinar se é 404 ou 400
+   - Retorna: `404 Not Found` ou `400 Bad Request`
+
+6. **Exception** - Erros genéricos
+   - Retorna: `500 Internal Server Error`
+
+### Formato de Resposta de Erro:
+
+```json
+{
+  "status": 400,
+  "error": "Erro de validação",
+  "message": "O username é obrigatório",
+  "timestamp": "2024-01-15T10:30:00"
+}
+```
 
 ## 🔄 Sistema de Inativação/Ativação (Watchlists)
 
@@ -255,7 +350,40 @@ PUT /watchlists/1/ativar?userId=1
 
 ## 🔐 Variáveis de Ambiente
 
-As configurações estão no arquivo `application.properties`. Veja `ENV_EXAMPLE.md` para referência de variáveis de ambiente.
+O projeto utiliza o arquivo `application.properties` para configurações. Um arquivo de exemplo `env.example` está disponível na raiz do projeto `ApiLetter/` com todas as variáveis de ambiente necessárias.
+
+### Arquivo env.example
+
+O arquivo `env.example` contém:
+
+```env
+# Configurações do Banco de Dados H2
+SPRING_DATASOURCE_URL=jdbc:h2:mem:apiletterdb
+SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.h2.Driver
+SPRING_DATASOURCE_USERNAME=sa
+SPRING_DATASOURCE_PASSWORD=
+
+# Configurações do H2 Console
+SPRING_H2_CONSOLE_ENABLED=true
+SPRING_H2_CONSOLE_PATH=/h2-console
+
+# Configurações JPA/Hibernate
+SPRING_JPA_HIBERNATE_DDL_AUTO=update
+SPRING_JPA_SHOW_SQL=true
+SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL=true
+SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.H2Dialect
+
+# Chave da API OMDB
+OMDB_API_KEY=e110f0dc
+
+# Configurações do Servidor
+SERVER_PORT=8080
+```
+
+**Nota:** O Spring Boot não lê arquivos `.env` nativamente. Para usar variáveis de ambiente, você pode:
+1. Configurar as variáveis no sistema operacional
+2. Usar um plugin como `spring-boot-dotenv` (não incluído no projeto)
+3. Continuar usando o `application.properties` (recomendado para este projeto)
 
 **Configurações principais:**
 - Banco de dados H2 (em memória)

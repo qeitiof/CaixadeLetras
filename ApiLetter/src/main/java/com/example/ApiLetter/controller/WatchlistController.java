@@ -3,6 +3,9 @@ package com.example.ApiLetter.controller;
 import com.example.ApiLetter.dto.*;
 import com.example.ApiLetter.service.WatchlistService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -56,7 +59,18 @@ public class WatchlistController {
         }
     }
 
-    // Listar watchlists do usuário logado
+    // GET ALL com paginação, ordenação e filtros
+    @GetMapping
+    public ResponseEntity<Page<WatchlistResponseDTO>> listarTodos(
+            @PageableDefault(size = 10, sort = "id") Pageable pageable,
+            @RequestParam(required = false) Long userId,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Boolean active) {
+        Page<WatchlistResponseDTO> watchlists = watchlistService.listarTodos(pageable, userId, name, active);
+        return ResponseEntity.ok(watchlists);
+    }
+
+    // Listar watchlists do usuário logado (mantido para compatibilidade)
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<WatchlistResponseDTO>> listarWatchlistsDoUsuario(@PathVariable Long userId) {
         List<WatchlistResponseDTO> watchlists = watchlistService.listarWatchlistsDoUsuario(userId);
